@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package sum;
+
+option go_package = "github.com/Ansh5461/Go_gRPC/sum/proto";
+
+message SumRequest {
+    int32 num1 = 1;
+    int32 num2 = 2;
+}
+
+message SumResponse {
+    int32 res = 1;
+}
+
+
+service SumService {
+    rpc Calculate(SumRequest) returns (SumResponse);
+}
