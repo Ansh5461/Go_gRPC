@@ -43,6 +43,4 @@ func main() {
 		log.Fatalf("failed to serve %v\n", err)
 	}
 
-	//go build -o bin/greet/server ./greet/server
-
 }

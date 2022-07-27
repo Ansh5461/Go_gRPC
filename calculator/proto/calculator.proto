@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package = "github.com/Ansh5461/Go_gRPC/calculator/proto";
+
+message PrimeRequest{
+    int64 num = 1;
+}
+
+message PrimeResponse{
+    int64 result = 1;
+}
+
+service PrimeFind {
+    rpc Primes(PrimeRequest) returns (stream PrimeResponse);
+}
