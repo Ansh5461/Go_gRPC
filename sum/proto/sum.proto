@@ -17,3 +17,5 @@ message SumResponse {
 service SumService {
     rpc Calculate(SumRequest) returns (SumResponse);
 }
+
+//rpc endpoint Calculate takes SumRequest and returns SumResponse

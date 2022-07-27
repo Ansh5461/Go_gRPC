@@ -11,6 +11,7 @@ func doGreet(c pb.GreetServiceClient) {
 	log.Println("doGreet was invoked")
 
 	//now we will call RPC endpoints
+	//this function is defined in gRPC proto file
 	res, err := c.Greet(context.Background(), &pb.GreetRequest{
 		FirstName: "Ansh ",
 	})
