@@ -23,6 +23,9 @@ func main() {
 	//we will create an instance of greet service client
 	c := pb.NewGreetServiceClient(conn)
 
-	//doGreet will greet the client
-	doGreet(c)
+	//doGreet will greet the client, only 1 times
+	//doGreet(c)
+
+	//this function will do server streaming
+	doGreetManyTimes(c)
 }
