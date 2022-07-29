@@ -12,6 +12,15 @@ message PrimeResponse{
     int64 result = 1;
 }
 
+message Inp {
+    int64 num = 1;
+}
+
+message Outp {
+    double res = 1;
+}
+
 service PrimeFind {
     rpc Primes(PrimeRequest) returns (stream PrimeResponse);
+    rpc Average (stream Inp) returns (Outp);
 }

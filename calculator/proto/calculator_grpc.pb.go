@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PrimeFindClient interface {
 	Primes(ctx context.Context, in *PrimeRequest, opts ...grpc.CallOption) (PrimeFind_PrimesClient, error)
+	Average(ctx context.Context, opts ...grpc.CallOption) (PrimeFind_AverageClient, error)
 }
 
 type primeFindClient struct {
@@ -65,11 +66,46 @@ func (x *primeFindPrimesClient) Recv() (*PrimeResponse, error) {
 	return m, nil
 }
 
+func (c *primeFindClient) Average(ctx context.Context, opts ...grpc.CallOption) (PrimeFind_AverageClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PrimeFind_ServiceDesc.Streams[1], "/calculator.PrimeFind/Average", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &primeFindAverageClient{stream}
+	return x, nil
+}
+
+type PrimeFind_AverageClient interface {
+	Send(*Inp) error
+	CloseAndRecv() (*Outp, error)
+	grpc.ClientStream
+}
+
+type primeFindAverageClient struct {
+	grpc.ClientStream
+}
+
+func (x *primeFindAverageClient) Send(m *Inp) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *primeFindAverageClient) CloseAndRecv() (*Outp, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(Outp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // PrimeFindServer is the server API for PrimeFind service.
 // All implementations must embed UnimplementedPrimeFindServer
 // for forward compatibility
 type PrimeFindServer interface {
 	Primes(*PrimeRequest, PrimeFind_PrimesServer) error
+	Average(PrimeFind_AverageServer) error
 	mustEmbedUnimplementedPrimeFindServer()
 }
 
@@ -79,6 +115,9 @@ type UnimplementedPrimeFindServer struct {
 
 func (UnimplementedPrimeFindServer) Primes(*PrimeRequest, PrimeFind_PrimesServer) error {
 	return status.Errorf(codes.Unimplemented, "method Primes not implemented")
+}
+func (UnimplementedPrimeFindServer) Average(PrimeFind_AverageServer) error {
+	return status.Errorf(codes.Unimplemented, "method Average not implemented")
 }
 func (UnimplementedPrimeFindServer) mustEmbedUnimplementedPrimeFindServer() {}
 
@@ -114,6 +153,32 @@ func (x *primeFindPrimesServer) Send(m *PrimeResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _PrimeFind_Average_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(PrimeFindServer).Average(&primeFindAverageServer{stream})
+}
+
+type PrimeFind_AverageServer interface {
+	SendAndClose(*Outp) error
+	Recv() (*Inp, error)
+	grpc.ServerStream
+}
+
+type primeFindAverageServer struct {
+	grpc.ServerStream
+}
+
+func (x *primeFindAverageServer) SendAndClose(m *Outp) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *primeFindAverageServer) Recv() (*Inp, error) {
+	m := new(Inp)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // PrimeFind_ServiceDesc is the grpc.ServiceDesc for PrimeFind service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -126,6 +191,11 @@ var PrimeFind_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "Primes",
 			Handler:       _PrimeFind_Primes_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "Average",
+			Handler:       _PrimeFind_Average_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "calculator.proto",

@@ -22,5 +22,8 @@ func main() {
 	c := pb.NewPrimeFindClient(conn)
 
 	//call the function from here, by passing the parameter as c
-	doPrimes(c)
+	//doPrimes(c)
+
+	//client streaming
+	doAverage(c)
 }
