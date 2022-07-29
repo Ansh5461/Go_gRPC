@@ -27,5 +27,8 @@ func main() {
 	//doGreet(c)
 
 	//this function will do server streaming
-	doGreetManyTimes(c)
+	//doGreetManyTimes(c)
+
+	//this function is for client streaming
+	doLongGreet(c)
 }
