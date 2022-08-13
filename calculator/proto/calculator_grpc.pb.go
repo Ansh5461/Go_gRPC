@@ -25,6 +25,7 @@ type PrimeFindClient interface {
 	Primes(ctx context.Context, in *PrimeRequest, opts ...grpc.CallOption) (PrimeFind_PrimesClient, error)
 	Average(ctx context.Context, opts ...grpc.CallOption) (PrimeFind_AverageClient, error)
 	MaxTillNow(ctx context.Context, opts ...grpc.CallOption) (PrimeFind_MaxTillNowClient, error)
+	Sqrt(ctx context.Context, in *SqrtRequest, opts ...grpc.CallOption) (*SqrtResponse, error)
 }
 
 type primeFindClient struct {
@@ -132,6 +133,15 @@ func (x *primeFindMaxTillNowClient) Recv() (*Result, error) {
 	return m, nil
 }
 
+func (c *primeFindClient) Sqrt(ctx context.Context, in *SqrtRequest, opts ...grpc.CallOption) (*SqrtResponse, error) {
+	out := new(SqrtResponse)
+	err := c.cc.Invoke(ctx, "/calculator.PrimeFind/Sqrt", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PrimeFindServer is the server API for PrimeFind service.
 // All implementations must embed UnimplementedPrimeFindServer
 // for forward compatibility
@@ -139,6 +149,7 @@ type PrimeFindServer interface {
 	Primes(*PrimeRequest, PrimeFind_PrimesServer) error
 	Average(PrimeFind_AverageServer) error
 	MaxTillNow(PrimeFind_MaxTillNowServer) error
+	Sqrt(context.Context, *SqrtRequest) (*SqrtResponse, error)
 	mustEmbedUnimplementedPrimeFindServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedPrimeFindServer) Average(PrimeFind_AverageServer) error {
 }
 func (UnimplementedPrimeFindServer) MaxTillNow(PrimeFind_MaxTillNowServer) error {
 	return status.Errorf(codes.Unimplemented, "method MaxTillNow not implemented")
+}
+func (UnimplementedPrimeFindServer) Sqrt(context.Context, *SqrtRequest) (*SqrtResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Sqrt not implemented")
 }
 func (UnimplementedPrimeFindServer) mustEmbedUnimplementedPrimeFindServer() {}
 
@@ -241,13 +255,36 @@ func (x *primeFindMaxTillNowServer) Recv() (*Number, error) {
 	return m, nil
 }
 
+func _PrimeFind_Sqrt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SqrtRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PrimeFindServer).Sqrt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/calculator.PrimeFind/Sqrt",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PrimeFindServer).Sqrt(ctx, req.(*SqrtRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PrimeFind_ServiceDesc is the grpc.ServiceDesc for PrimeFind service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PrimeFind_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "calculator.PrimeFind",
 	HandlerType: (*PrimeFindServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Sqrt",
+			Handler:    _PrimeFind_Sqrt_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Primes",

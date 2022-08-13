@@ -28,5 +28,7 @@ func main() {
 	//doAverage(c)
 
 	//both client and server streaming
-	doMaxFind(c)
+	//doMaxFind(c)
+
+	doSqrt(c, -10)
 }

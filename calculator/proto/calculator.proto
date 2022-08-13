@@ -28,8 +28,17 @@ message Result {
     int64 max = 1;
 }
 
+message SqrtRequest {
+    int32 number = 1;
+}
+
+message SqrtResponse {
+    double result = 1;
+}
+
 service PrimeFind {
     rpc Primes(PrimeRequest) returns (stream PrimeResponse);
     rpc Average (stream Inp) returns (Outp);
     rpc MaxTillNow(stream Number) returns (stream Result);
+    rpc Sqrt(SqrtRequest) returns (SqrtResponse);
 }
