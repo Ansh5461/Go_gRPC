@@ -25,5 +25,8 @@ func main() {
 	//doPrimes(c)
 
 	//client streaming
-	doAverage(c)
+	//doAverage(c)
+
+	//both client and server streaming
+	doMaxFind(c)
 }

@@ -20,7 +20,16 @@ message Outp {
     double res = 1;
 }
 
+message Number {
+    int64 inp = 1;
+}
+
+message Result {
+    int64 max = 1;
+}
+
 service PrimeFind {
     rpc Primes(PrimeRequest) returns (stream PrimeResponse);
     rpc Average (stream Inp) returns (Outp);
+    rpc MaxTillNow(stream Number) returns (stream Result);
 }
