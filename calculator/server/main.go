@@ -30,6 +30,7 @@ func main() {
 
 	//register it as type server struct, means s has now the data of server struct which is our calculator type
 	pb.RegisterPrimeFindServer(s, &Server{})
+	//reflection.Register(s)
 
 	if err = s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve %v\n", err)
